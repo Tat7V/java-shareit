@@ -14,10 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+                              @RequestHeader(USER_ID_HEADER) Long ownerId) {
         return itemService.createItem(itemDto, ownerId);
     }
 
@@ -27,16 +28,16 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public List<ItemDto> getItemsByOwnerId(@RequestHeader(USER_ID_HEADER) Long ownerId) {
         return itemService.getItemsByOwnerId(ownerId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@PathVariable Long itemId,
                               @RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+                              @RequestHeader(USER_ID_HEADER) Long ownerId) {
         if (ownerId == null) {
-            throw new ValidationException("Заголовок X-Sharer-User-Id обязателен");
+            throw new ValidationException("Заголовок " + USER_ID_HEADER + " обязателен");
         }
         return itemService.updateItem(itemId, itemDto, ownerId);
     }
