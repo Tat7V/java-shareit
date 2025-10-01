@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @Entity
 @Table(name = "users")
