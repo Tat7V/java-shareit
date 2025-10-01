@@ -5,6 +5,7 @@ import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -52,8 +53,21 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenException(final ForbiddenException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAllExceptions(final Exception e) {
+        return new ErrorResponse("Внутренняя ошибка сервера: " + e.getMessage());
+    }
+
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class ErrorResponse {
         String error;
