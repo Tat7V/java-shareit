@@ -4,16 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemRequestDto {
+public class ItemForRequestDto {
     private Long id;
+    private String name;
     private String description;
-    private LocalDateTime created;
-    private List<ItemForRequestDto> items;
+    private Boolean available;
+    private Long requestId;
+    private Long ownerId;
 }
-

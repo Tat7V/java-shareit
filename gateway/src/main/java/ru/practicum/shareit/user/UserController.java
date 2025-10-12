@@ -2,56 +2,50 @@ package ru.practicum.shareit.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exeptions.ValidationException;
+import ru.practicum.shareit.user.client.UserClient;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
-import ru.practicum.shareit.user.service.UserService;
 
-import java.util.List;
-
-/**
- * TODO Sprint add-controllers.
- */
-@RestController
+@Controller
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
+@Slf4j
+@Validated
 public class UserController {
-    private final UserService userService;
+    private final UserClient userClient;
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            throw new ValidationException("Email не может быть пустым");
-        }
-        if (userDto.getName() == null || userDto.getName().isBlank()) {
-            throw new ValidationException("Имя не может быть пустым");
-        }
-        return userService.createUser(userDto);
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
+        log.info("Creating user {}", userDto);
+        return userClient.createUser(userDto);
     }
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
-            return userService.getUserById(id);
-        }
+    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
+        log.info("Getting user by id {}", id);
+        return userClient.getUserById(id);
+    }
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<Object> getAllUsers() {
+        log.info("Getting all users");
+        return userClient.getAllUsers();
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@PathVariable Long id,
-                              @RequestBody UserUpdateDto userUpdateDto) {
-        UserDto userDto = new UserDto();
-        userDto.setName(userUpdateDto.getName());
-        userDto.setEmail(userUpdateDto.getEmail());
-
-        return userService.updateUser(id, userDto);
+    public ResponseEntity<Object> updateUser(@PathVariable Long id,
+                                             @RequestBody UserDto userDto) {
+        log.info("Updating user {} with data {}", id, userDto);
+        return userClient.updateUser(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-     public void deleteUser(@PathVariable Long id) {
-            userService.deleteUser(id);
-        }
+    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+        log.info("Deleting user {}", id);
+        return userClient.deleteUser(id);
     }
+}
