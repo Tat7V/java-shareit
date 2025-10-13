@@ -19,6 +19,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -34,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     @Transactional
@@ -47,6 +50,12 @@ public class ItemServiceImpl implements ItemService {
         item.setOwner(owner);
         item.setAvailable(itemDto.getAvailable());
 
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = itemRequestRepository.findById(itemDto.getRequestId())
+                .orElseThrow(() -> new NotFoundException("Запрос не найден"));
+            item.setRequest(request);
+        }
+
         Item savedItem = itemRepository.save(item);
         return ItemMapper.toItemDto(savedItem);
     }
@@ -59,41 +68,40 @@ public class ItemServiceImpl implements ItemService {
         ItemWithBookingsDto itemWithBookingsDto = ItemMapper.toItemWithBookingsDto(item);
         LocalDateTime now = LocalDateTime.now();
 
-        // Для lastBooking - последнее завершенное бронирование
-        Optional<Booking> lastBookingOpt = bookingRepository.findLastBookingForItem(id, now);
-        if (lastBookingOpt.isPresent()) {
-            Booking lastBooking = lastBookingOpt.get();
-            itemWithBookingsDto.setLastBooking(new ItemWithBookingsDto.BookingInfo(
-                    lastBooking.getId(),
-                    lastBooking.getBooker().getId(),
-                    lastBooking.getStart(),
-                    lastBooking.getEnd()
-            ));
-        } else {
-            Optional<Booking> currentBookingOpt = bookingRepository.findCurrentBookingForItem(id, now);
-            if (currentBookingOpt.isPresent()) {
-                Booking currentBooking = currentBookingOpt.get();
+        if (item.getOwner().getId().equals(userId)) {
+            Optional<Booking> lastBookingOpt = bookingRepository.findLastBookingForItem(id, now);
+            if (lastBookingOpt.isPresent()) {
+                Booking lastBooking = lastBookingOpt.get();
                 itemWithBookingsDto.setLastBooking(new ItemWithBookingsDto.BookingInfo(
-                        currentBooking.getId(),
-                        currentBooking.getBooker().getId(),
-                        currentBooking.getStart(),
-                        currentBooking.getEnd()
+                        lastBooking.getId(),
+                        lastBooking.getBooker().getId(),
+                        lastBooking.getStart(),
+                        lastBooking.getEnd()
+                ));
+            } else {
+                Optional<Booking> currentBookingOpt = bookingRepository.findCurrentBookingForItem(id, now);
+                if (currentBookingOpt.isPresent()) {
+                    Booking currentBooking = currentBookingOpt.get();
+                    itemWithBookingsDto.setLastBooking(new ItemWithBookingsDto.BookingInfo(
+                            currentBooking.getId(),
+                            currentBooking.getBooker().getId(),
+                            currentBooking.getStart(),
+                            currentBooking.getEnd()
+                    ));
+                }
+            }
+
+            Optional<Booking> nextBookingOpt = bookingRepository.findNextBookingForItem(id, now);
+            if (nextBookingOpt.isPresent()) {
+                Booking nextBooking = nextBookingOpt.get();
+                itemWithBookingsDto.setNextBooking(new ItemWithBookingsDto.BookingInfo(
+                        nextBooking.getId(),
+                        nextBooking.getBooker().getId(),
+                        nextBooking.getStart(),
+                        nextBooking.getEnd()
                 ));
             }
-        }
-
-        Optional<Booking> nextBookingOpt = bookingRepository.findNextBookingForItem(id, now);
-        if (nextBookingOpt.isPresent()) {
-            Booking nextBooking = nextBookingOpt.get();
-            itemWithBookingsDto.setNextBooking(new ItemWithBookingsDto.BookingInfo(
-                    nextBooking.getId(),
-                    nextBooking.getBooker().getId(),
-                    nextBooking.getStart(),
-                    nextBooking.getEnd()
-            ));
-        }
-
-        if (!item.getOwner().getId().equals(userId)) {
+        } else {
             itemWithBookingsDto.setLastBooking(null);
             itemWithBookingsDto.setNextBooking(null);
         }
@@ -211,7 +219,6 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public CommentDto addComment(Long itemId, CommentDto commentDto, Long authorId) {
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с Id %d не найден", authorId)));
@@ -237,6 +244,7 @@ public class ItemServiceImpl implements ItemService {
         comment.setCreated(LocalDateTime.now());
 
         Comment savedComment = commentRepository.save(comment);
+        commentRepository.flush();
         return convertToCommentDto(savedComment);
     }
 
