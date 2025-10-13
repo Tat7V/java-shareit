@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.service.BookingService;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class BookingController {
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public BookingDto createBooking(@RequestBody BookingRequestDto bookingRequestDto,
+    public BookingDto createBooking(@Valid @RequestBody BookingRequestDto bookingRequestDto,
                                     @RequestHeader(USER_ID_HEADER) Long bookerId) {
         return bookingService.createBooking(bookingRequestDto, bookerId);
     }
@@ -51,5 +50,4 @@ public class BookingController {
                                                @RequestParam(defaultValue = "10") int size) {
         return bookingService.getBookingsByOwner(state, ownerId, from, size);
     }
-
 }

@@ -19,8 +19,8 @@ public class ItemWithBookingsDto {
     String description;
     Boolean available;
     Long requestId;
-    BookingInfo lastBooking;
-    BookingInfo nextBooking;
+    BookingInfo lastBooking = null;
+    BookingInfo nextBooking = null;
     List<CommentDto> comments;
 
     @Data

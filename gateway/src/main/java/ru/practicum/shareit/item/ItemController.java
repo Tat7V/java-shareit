@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +51,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItems(@RequestParam String text) {
-        log.info("Searching items with text: {}", text);
-        return itemClient.searchItems(text);
+    public ResponseEntity<Object> searchItems(@RequestParam String text,
+                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        log.info("Searching items with text: {}, from={}, size={}", text, from, size);
+        return itemClient.searchItems(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

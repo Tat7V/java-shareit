@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -51,33 +54,48 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemWithBookingsDto getItemById(Long id, Long userId) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("Предмет с Id %d не найден.",id)));
+                .orElseThrow(() -> new NotFoundException(String.format("Предмет с Id %d не найден.", id)));
+
         ItemWithBookingsDto itemWithBookingsDto = ItemMapper.toItemWithBookingsDto(item);
+        LocalDateTime now = LocalDateTime.now();
 
-        if (item.getOwner().getId().equals(userId)) {
-            LocalDateTime now = LocalDateTime.now();
-
-            List<Booking> lastBookings = bookingRepository.findLastBookingForItem(id, now);
-            if (!lastBookings.isEmpty()) {
-                Booking lastBooking = lastBookings.get(0);
+        // Для lastBooking - последнее завершенное бронирование
+        Optional<Booking> lastBookingOpt = bookingRepository.findLastBookingForItem(id, now);
+        if (lastBookingOpt.isPresent()) {
+            Booking lastBooking = lastBookingOpt.get();
+            itemWithBookingsDto.setLastBooking(new ItemWithBookingsDto.BookingInfo(
+                    lastBooking.getId(),
+                    lastBooking.getBooker().getId(),
+                    lastBooking.getStart(),
+                    lastBooking.getEnd()
+            ));
+        } else {
+            Optional<Booking> currentBookingOpt = bookingRepository.findCurrentBookingForItem(id, now);
+            if (currentBookingOpt.isPresent()) {
+                Booking currentBooking = currentBookingOpt.get();
                 itemWithBookingsDto.setLastBooking(new ItemWithBookingsDto.BookingInfo(
-                        lastBooking.getId(),
-                        lastBooking.getBooker().getId(),
-                        lastBooking.getStart(),
-                        lastBooking.getEnd()
+                        currentBooking.getId(),
+                        currentBooking.getBooker().getId(),
+                        currentBooking.getStart(),
+                        currentBooking.getEnd()
                 ));
             }
+        }
 
-            List<Booking> nextBookings = bookingRepository.findNextBookingForItem(id, now);
-            if (!nextBookings.isEmpty()) {
-                Booking nextBooking = nextBookings.get(0);
-                itemWithBookingsDto.setNextBooking(new ItemWithBookingsDto.BookingInfo(
-                        nextBooking.getId(),
-                        nextBooking.getBooker().getId(),
-                        nextBooking.getStart(),
-                        nextBooking.getEnd()
-                ));
-            }
+        Optional<Booking> nextBookingOpt = bookingRepository.findNextBookingForItem(id, now);
+        if (nextBookingOpt.isPresent()) {
+            Booking nextBooking = nextBookingOpt.get();
+            itemWithBookingsDto.setNextBooking(new ItemWithBookingsDto.BookingInfo(
+                    nextBooking.getId(),
+                    nextBooking.getBooker().getId(),
+                    nextBooking.getStart(),
+                    nextBooking.getEnd()
+            ));
+        }
+
+        if (!item.getOwner().getId().equals(userId)) {
+            itemWithBookingsDto.setLastBooking(null);
+            itemWithBookingsDto.setNextBooking(null);
         }
 
         List<Comment> comments = commentRepository.findByItemIdOrderByCreatedDesc(id);
@@ -110,15 +128,11 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, Booking> nextBookingsByItem = new HashMap<>();
 
         for (Long itemId : itemIds) {
-            List<Booking> lastBookings = bookingRepository.findLastBookingForItem(itemId, now);
-            if (!lastBookings.isEmpty()) {
-                lastBookingsByItem.put(itemId, lastBookings.get(0));
-            }
+            bookingRepository.findLastBookingForItem(itemId, now)
+                    .ifPresent(booking -> lastBookingsByItem.put(itemId, booking));
 
-            List<Booking> nextBookings = bookingRepository.findNextBookingForItem(itemId, now);
-            if (!nextBookings.isEmpty()) {
-                nextBookingsByItem.put(itemId, nextBookings.get(0));
-            }
+            bookingRepository.findNextBookingForItem(itemId, now)
+                    .ifPresent(booking -> nextBookingsByItem.put(itemId, booking));
         }
 
         return items.stream().map(item -> {
@@ -184,12 +198,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, int from, int size) {
         if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
 
-        return itemRepository.searchAvailableItems(text).stream()
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Item> items = itemRepository.searchAvailableItems(text, pageable);
+
+        return items.stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

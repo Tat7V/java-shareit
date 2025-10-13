@@ -140,10 +140,16 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getBookingsByOwner(String state, Long ownerId, int from, int size) {
-        userRepository.findById(ownerId)
+        User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с Id %d не найден", ownerId)));
+
+        List<Item> userItems = itemRepository.findByOwnerIdOrderById(ownerId);
+        if (userItems.isEmpty()) {
+            return List.of();
+        }
 
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
         LocalDateTime now = LocalDateTime.now();

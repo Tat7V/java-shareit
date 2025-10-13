@@ -94,13 +94,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     private ItemForRequestDto convertItemToRequestDto(Item item) {
-        return new ItemForRequestDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null,
-                item.getOwner().getId()
-        );
+        ItemForRequestDto dto = new ItemForRequestDto();
+        dto.setId(item.getId());
+        dto.setName(item.getName());
+        dto.setDescription(item.getDescription());
+        dto.setAvailable(item.getAvailable());
+        dto.setRequestId(item.getRequest() != null ? item.getRequest().getId() : null);
+        dto.setOwnerId(item.getOwner() != null ? item.getOwner().getId() : null);
+        return dto;
     }
 }

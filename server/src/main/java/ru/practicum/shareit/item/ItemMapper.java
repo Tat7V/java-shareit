@@ -5,6 +5,8 @@ import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 
+import java.util.ArrayList;
+
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
         ItemDto itemDto = new ItemDto();
@@ -37,6 +39,9 @@ public class ItemMapper {
         dto.setDescription(item.getDescription());
         dto.setAvailable(item.getAvailable());
         dto.setRequestId(item.getRequest() != null ? item.getRequest().getId() : null);
+        dto.setLastBooking(null);
+        dto.setNextBooking(null);
+        dto.setComments(new ArrayList<>());
         return dto;
     }
 }
