@@ -98,6 +98,9 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.12</version>
+                    <configuration>
+                        <output>file</output>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>jacoco-initialize</id>
@@ -162,7 +165,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
     <profiles>
         <profile>
             <id>check</id>
@@ -178,6 +180,14 @@
                     </plugin>
                 </plugins>
             </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
 </project>
