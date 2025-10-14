@@ -22,8 +22,8 @@ public class ItemWithBookingsDto {
     String description;
     Boolean available;
     Long requestId;
-    BookingInfo lastBooking = null;
-    BookingInfo nextBooking = null;
+    BookingInfo lastBooking;
+    BookingInfo nextBooking;
     List<CommentDto> comments = new ArrayList<>();
 
     @Data

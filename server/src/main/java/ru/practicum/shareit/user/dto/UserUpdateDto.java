@@ -11,6 +11,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateDto {
-    String name;    // без @NotBlank
+    String name;
     String email;
 }

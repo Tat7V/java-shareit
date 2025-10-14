@@ -180,7 +180,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException(String.format("Предмет с Id %d не найден.", itemId)));
 
         if (!existingItem.getOwner().getId().equals(ownerId)) {
-            throw new NotFoundException("Редактировать предмет может только её владелец.");
+            throw new NotFoundException("Редактировать предмет может только её владелец");
         }
 
         if (itemDto.getName() != null) {

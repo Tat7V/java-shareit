@@ -36,20 +36,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByItemOwnerIdAndStatusOrderByStartDesc(Long ownerId, BookingStatus status, Pageable pageable);
 
-    /*    @Query("select b from Booking b " +
-            "where b.item.id = ?1 " +
-            "and b.status = 'APPROVED' " +
-            "and b.end < ?2 " +
-            "order by b.end desc")
-    List<Booking> findLastBookingForItem(Long itemId, LocalDateTime now);
-
-    @Query("select b from Booking b " +
-            "where b.item.id = ?1 " +
-            "and b.status = 'APPROVED' " +
-            "and b.start > ?2 " +
-            "order by b.start asc")
-    List<Booking> findNextBookingForItem(Long itemId, LocalDateTime now);*/
-
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.id = :itemId " +
             "AND b.status = ru.practicum.shareit.booking.BookingStatus.APPROVED " +
