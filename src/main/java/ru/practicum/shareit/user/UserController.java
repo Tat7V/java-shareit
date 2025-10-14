@@ -3,7 +3,9 @@ package ru.practicum.shareit.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exeptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
@@ -19,8 +21,14 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-            return userService.createUser(userDto);
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
+            throw new ValidationException("Email не может быть пустым");
         }
+        if (userDto.getName() == null || userDto.getName().isBlank()) {
+            throw new ValidationException("Имя не может быть пустым");
+        }
+        return userService.createUser(userDto);
+    }
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Long id) {
@@ -33,7 +41,12 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public UserDto updateUser(@PathVariable Long id,
+                              @RequestBody UserUpdateDto userUpdateDto) {
+        UserDto userDto = new UserDto();
+        userDto.setName(userUpdateDto.getName());
+        userDto.setEmail(userUpdateDto.getEmail());
+
         return userService.updateUser(id, userDto);
     }
 
