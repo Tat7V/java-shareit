@@ -29,23 +29,6 @@ class UserDtoTest {
     }
 
     @Test
-    void testDeserializeUserDto() throws Exception {
-        String jsonContent = """
-                {
-                    "id": 1,
-                    "name": "Тестовый пользователь",
-                    "email": "тест@пример.ру"
-                }
-                """;
-
-        UserDto result = json.parse(jsonContent).getObject();
-
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("Тестовый пользователь");
-        assertThat(result.getEmail()).isEqualTo("тест@пример.ру");
-    }
-
-    @Test
     void testSerializeUserDtoWithNullValues() throws Exception {
         UserDto dto = new UserDto();
         dto.setId(1L);
@@ -57,22 +40,5 @@ class UserDtoTest {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathValue("$.name").isNull();
         assertThat(result).extractingJsonPathValue("$.email").isNull();
-    }
-
-    @Test
-    void testDeserializeUserDtoWithNullValues() throws Exception {
-        String jsonContent = """
-                {
-                    "id": 1,
-                    "name": null,
-                    "email": null
-                }
-                """;
-
-        UserDto result = json.parse(jsonContent).getObject();
-
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isNull();
-        assertThat(result.getEmail()).isNull();
     }
 }

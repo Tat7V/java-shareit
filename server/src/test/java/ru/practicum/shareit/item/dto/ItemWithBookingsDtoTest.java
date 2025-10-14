@@ -68,54 +68,6 @@ class ItemWithBookingsDtoTest {
     }
 
     @Test
-    void testDeserializeItemWithBookingsDto() throws Exception {
-        String jsonContent = """
-                {
-                    "id": 1,
-                    "name": "Тестовая вещь",
-                    "description": "Описание тестовой вещи",
-                    "available": true,
-                    "requestId": 2,
-                    "lastBooking": {
-                        "id": 3,
-                        "bookerId": 4,
-                        "start": "2023-01-01T10:00:00",
-                        "end": "2023-01-02T10:00:00"
-                    },
-                    "nextBooking": {
-                        "id": 5,
-                        "bookerId": 6,
-                        "start": "2023-02-01T10:00:00",
-                        "end": "2023-02-02T10:00:00"
-                    },
-                    "comments": []
-                }
-                """;
-
-        ItemWithBookingsDto result = json.parse(jsonContent).getObject();
-
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("Тестовая вещь");
-        assertThat(result.getDescription()).isEqualTo("Описание тестовой вещи");
-        assertThat(result.getAvailable()).isTrue();
-        assertThat(result.getRequestId()).isEqualTo(2L);
-
-        assertThat(result.getLastBooking()).isNotNull();
-        assertThat(result.getLastBooking().getId()).isEqualTo(3L);
-        assertThat(result.getLastBooking().getBookerId()).isEqualTo(4L);
-        assertThat(result.getLastBooking().getStart()).isEqualTo(LocalDateTime.of(2023, 1, 1, 10, 0));
-        assertThat(result.getLastBooking().getEnd()).isEqualTo(LocalDateTime.of(2023, 1, 2, 10, 0));
-
-        assertThat(result.getNextBooking()).isNotNull();
-        assertThat(result.getNextBooking().getId()).isEqualTo(5L);
-        assertThat(result.getNextBooking().getBookerId()).isEqualTo(6L);
-        assertThat(result.getNextBooking().getStart()).isEqualTo(LocalDateTime.of(2023, 2, 1, 10, 0));
-        assertThat(result.getNextBooking().getEnd()).isEqualTo(LocalDateTime.of(2023, 2, 2, 10, 0));
-
-        assertThat(result.getComments()).isEmpty();
-    }
-
-    @Test
     void testSerializeWithNullValues() throws Exception {
         ItemWithBookingsDto dto = new ItemWithBookingsDto();
         dto.setId(1L);

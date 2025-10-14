@@ -99,17 +99,14 @@ class ItemServiceImplIntegrationTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        
         ItemWithBookingsDto itemDto = result.get(0);
         assertEquals(item.getId(), itemDto.getId());
         assertEquals(item.getName(), itemDto.getName());
         assertEquals(item.getDescription(), itemDto.getDescription());
         assertTrue(itemDto.getAvailable());
-        
         assertNotNull(itemDto.getLastBooking());
         assertEquals(pastBooking.getId(), itemDto.getLastBooking().getId());
         assertEquals(booker.getId(), itemDto.getLastBooking().getBookerId());
-        
         assertNotNull(itemDto.getNextBooking());
         assertEquals(futureBooking.getId(), itemDto.getNextBooking().getId());
         assertEquals(booker.getId(), itemDto.getNextBooking().getBookerId());
@@ -118,10 +115,8 @@ class ItemServiceImplIntegrationTest {
     @Test
     void testGetItemsByOwner_WhenNoBookings_ShouldReturnItemsWithoutBookings() {
         List<ItemWithBookingsDto> result = itemService.getItemsByOwnerId(owner.getId());
-
         assertNotNull(result);
         assertEquals(1, result.size());
-
         ItemWithBookingsDto itemDto = result.get(0);
         assertEquals(item.getId(), itemDto.getId());
         assertNull(itemDto.getLastBooking());
@@ -130,7 +125,7 @@ class ItemServiceImplIntegrationTest {
 
     @Test
     void testGetItemsByOwner_WhenUserNotFound_ShouldThrowException() {
-        assertThrows(NotFoundException.class, () -> 
+        assertThrows(NotFoundException.class, () ->
             itemService.getItemsByOwnerId(999L)
         );
     }
@@ -142,9 +137,7 @@ class ItemServiceImplIntegrationTest {
         searchDto.setDescription("Описание поисковой вещи");
         searchDto.setAvailable(true);
         itemService.createItem(searchDto, owner.getId());
-
         List<ItemDto> result = itemService.searchItems("Поиск", 0, 10);
-
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Поисковая вещь", result.get(0).getName());
@@ -153,7 +146,6 @@ class ItemServiceImplIntegrationTest {
     @Test
     void testSearchItems_WithEmptyText_ShouldReturnEmptyList() {
         List<ItemDto> result = itemService.searchItems("", 0, 10);
-
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -164,9 +156,7 @@ class ItemServiceImplIntegrationTest {
         itemDto.setName("Новая вещь");
         itemDto.setDescription("Описание новой вещи");
         itemDto.setAvailable(true);
-
         ItemDto result = itemService.createItem(itemDto, owner.getId());
-
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals("Новая вещь", result.getName());
@@ -181,8 +171,7 @@ class ItemServiceImplIntegrationTest {
         itemDto.setName("");
         itemDto.setDescription("Описание");
         itemDto.setAvailable(true);
-
-        assertThrows(ValidationException.class, () -> 
+        assertThrows(ValidationException.class, () ->
             itemService.createItem(itemDto, owner.getId())
         );
     }

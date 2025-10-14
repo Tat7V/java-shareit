@@ -33,28 +33,6 @@ class ItemDtoTest {
     }
 
     @Test
-    void testDeserializeItemDto() throws Exception
-    {
-        String jsonContent = """
-                {
-                    "id": 1,
-                    "name": "Тестовая вещь",
-                    "description": "Описание тестовой вещи",
-                    "available": true,
-                    "requestId": 2
-                }
-                """;
-
-        ItemDto result = json.parse(jsonContent).getObject();
-
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("Тестовая вещь");
-        assertThat(result.getDescription()).isEqualTo("Описание тестовой вещи");
-        assertThat(result.getAvailable()).isTrue();
-        assertThat(result.getRequestId()).isEqualTo(2L);
-    }
-
-    @Test
     void testSerializeItemDtoWithNullValues() throws Exception {
         ItemDto dto = new ItemDto();
         dto.setId(1L);

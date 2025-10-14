@@ -66,7 +66,7 @@ class UserServiceImplIntegrationTest {
         userDto2.setName("Пользователь 2");
         userDto2.setEmail("дубликат@пример.ру");
 
-        assertThrows(ConflictException.class, () -> 
+        assertThrows(ConflictException.class, () ->
             userService.createUser(userDto2)
         );
     }
@@ -113,7 +113,7 @@ class UserServiceImplIntegrationTest {
         UserDto updateDto = new UserDto();
         updateDto.setName("Другое имя");
 
-        assertThrows(NotFoundException.class, () -> 
+        assertThrows(NotFoundException.class, () ->
             userService.updateUser(999L, updateDto)
         );
     }
@@ -135,7 +135,7 @@ class UserServiceImplIntegrationTest {
 
     @Test
     void testGetUserById_WithNonExistentUser_ShouldThrowException() {
-        assertThrows(NotFoundException.class, () -> 
+        assertThrows(NotFoundException.class, () ->
             userService.getUserById(999L)
         );
     }
@@ -167,14 +167,14 @@ class UserServiceImplIntegrationTest {
 
         userService.deleteUser(createdUser.getId());
 
-        assertThrows(NotFoundException.class, () -> 
+        assertThrows(NotFoundException.class, () ->
             userService.getUserById(createdUser.getId())
         );
     }
 
     @Test
     void testDeleteUser_WithNonExistentUser_ShouldThrowException() {
-        assertThrows(NotFoundException.class, () -> 
+        assertThrows(NotFoundException.class, () ->
             userService.deleteUser(999L)
         );
     }
