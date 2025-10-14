@@ -40,7 +40,6 @@ class ItemServiceImplIntegrationTest {
 
     ItemServiceImpl itemService;
 
-
     User owner;
     User booker;
     Item item;

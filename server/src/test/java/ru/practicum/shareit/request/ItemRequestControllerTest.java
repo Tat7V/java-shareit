@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.request.client.ItemRequestClient;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.service.ItemRequestService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -32,7 +32,7 @@ class ItemRequestControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    ItemRequestClient itemRequestClient;
+    ItemRequestService itemRequestService;
 
     ItemRequestDto itemRequestDto;
 
@@ -41,12 +41,12 @@ class ItemRequestControllerTest {
         itemRequestDto = new ItemRequestDto();
         itemRequestDto.setId(1L);
         itemRequestDto.setDescription("Нужна дрель");
+        itemRequestDto.setCreated(LocalDateTime.now());
     }
 
     @Test
     void testCreateRequest_ShouldReturnCreatedRequest() throws Exception {
-        when(itemRequestClient.createRequest(any(ItemRequestDto.class), anyLong()))
-                .thenReturn(ResponseEntity.ok(itemRequestDto));
+        when(itemRequestService.createRequest(any(ItemRequestDto.class), anyLong())).thenReturn(itemRequestDto);
 
         mockMvc.perform(post("/requests")
                         .header("X-Sharer-User-Id", 1L)
@@ -66,24 +66,8 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void testCreateRequest_WithInvalidData_ShouldReturnBadRequest() throws Exception {
-        ItemRequestDto invalidRequestDto = new ItemRequestDto();
-        invalidRequestDto.setDescription("");
-
-        when(itemRequestClient.createRequest(any(ItemRequestDto.class), anyLong()))
-                .thenReturn(ResponseEntity.badRequest().build());
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequestDto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void testGetUserRequests_ShouldReturnRequestsList() throws Exception {
-        when(itemRequestClient.getUserRequests(anyLong()))
-                .thenReturn(ResponseEntity.ok(List.of(itemRequestDto)));
+        when(itemRequestService.getUserRequests(anyLong())).thenReturn(List.of(itemRequestDto));
 
         mockMvc.perform(get("/requests")
                         .header("X-Sharer-User-Id", 1L))
@@ -101,8 +85,8 @@ class ItemRequestControllerTest {
 
     @Test
     void testGetAllRequests_ShouldReturnRequestsList() throws Exception {
-        when(itemRequestClient.getAllRequests(anyLong(), anyInt(), anyInt()))
-                .thenReturn(ResponseEntity.ok(List.of(itemRequestDto)));
+        when(itemRequestService.getAllRequests(anyLong(), anyInt(), anyInt()))
+                .thenReturn(List.of(itemRequestDto));
 
         mockMvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", 1L)
@@ -122,18 +106,8 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void testGetAllRequests_WithInvalidPagination_ShouldReturnBadRequest() throws Exception {
-        mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .param("size", "0"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void testGetRequestById_ShouldReturnRequest() throws Exception {
-        when(itemRequestClient.getRequestById(anyLong(), anyLong()))
-                .thenReturn(ResponseEntity.ok(itemRequestDto));
+        when(itemRequestService.getRequestById(anyLong(), anyLong())).thenReturn(itemRequestDto);
 
         mockMvc.perform(get("/requests/1")
                         .header("X-Sharer-User-Id", 1L))
@@ -146,5 +120,15 @@ class ItemRequestControllerTest {
     void testGetRequestById_WithoutUserHeader_ShouldReturnBadRequest() throws Exception {
         mockMvc.perform(get("/requests/1"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testGetRequestById_WithNonExistentRequest_ShouldReturnNotFound() throws Exception {
+        when(itemRequestService.getRequestById(anyLong(), anyLong()))
+                .thenThrow(new ru.practicum.shareit.exeptions.NotFoundException("Запрос не найден"));
+
+        mockMvc.perform(get("/requests/999")
+                        .header("X-Sharer-User-Id", 1L))
+                .andExpect(status().isNotFound());
     }
 }
