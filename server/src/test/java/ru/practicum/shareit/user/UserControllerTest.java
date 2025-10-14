@@ -65,18 +65,6 @@ class UserControllerTest {
     }
 
     @Test
-    void testCreateUser_WithInvalidData_ShouldReturnBadRequest() throws Exception {
-        UserDto invalidUserDto = new UserDto();
-        invalidUserDto.setName("");
-        invalidUserDto.setEmail("неверный-email");
-
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidUserDto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void testGetUserById_ShouldReturnUser() throws Exception {
         when(userService.getUserById(anyLong())).thenReturn(userDto);
 

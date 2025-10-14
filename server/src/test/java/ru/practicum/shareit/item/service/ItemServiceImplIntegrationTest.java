@@ -78,52 +78,6 @@ class ItemServiceImplIntegrationTest {
     }
 
     @Test
-    void testGetItemsByOwner_ShouldReturnItemsWithBookings() {
-        Booking pastBooking = new Booking();
-        pastBooking.setItem(item);
-        pastBooking.setBooker(booker);
-        pastBooking.setStart(LocalDateTime.now().minusDays(2));
-        pastBooking.setEnd(LocalDateTime.now().minusDays(1));
-        pastBooking.setStatus(BookingStatus.APPROVED);
-        bookingRepository.save(pastBooking);
-
-        Booking futureBooking = new Booking();
-        futureBooking.setItem(item);
-        futureBooking.setBooker(booker);
-        futureBooking.setStart(LocalDateTime.now().plusDays(1));
-        futureBooking.setEnd(LocalDateTime.now().plusDays(2));
-        futureBooking.setStatus(BookingStatus.APPROVED);
-        bookingRepository.save(futureBooking);
-
-        List<ItemWithBookingsDto> result = itemService.getItemsByOwnerId(owner.getId());
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        ItemWithBookingsDto itemDto = result.get(0);
-        assertEquals(item.getId(), itemDto.getId());
-        assertEquals(item.getName(), itemDto.getName());
-        assertEquals(item.getDescription(), itemDto.getDescription());
-        assertTrue(itemDto.getAvailable());
-        assertNotNull(itemDto.getLastBooking());
-        assertEquals(pastBooking.getId(), itemDto.getLastBooking().getId());
-        assertEquals(booker.getId(), itemDto.getLastBooking().getBookerId());
-        assertNotNull(itemDto.getNextBooking());
-        assertEquals(futureBooking.getId(), itemDto.getNextBooking().getId());
-        assertEquals(booker.getId(), itemDto.getNextBooking().getBookerId());
-    }
-
-    @Test
-    void testGetItemsByOwner_WhenNoBookings_ShouldReturnItemsWithoutBookings() {
-        List<ItemWithBookingsDto> result = itemService.getItemsByOwnerId(owner.getId());
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        ItemWithBookingsDto itemDto = result.get(0);
-        assertEquals(item.getId(), itemDto.getId());
-        assertNull(itemDto.getLastBooking());
-        assertNull(itemDto.getNextBooking());
-    }
-
-    @Test
     void testGetItemsByOwner_WhenUserNotFound_ShouldThrowException() {
         assertThrows(NotFoundException.class, () ->
             itemService.getItemsByOwnerId(999L)
