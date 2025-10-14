@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

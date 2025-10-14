@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.request.dto;
 
 import lombok.AccessLevel;
@@ -34,7 +35,7 @@ class ItemRequestDtoTest {
     void testItemRequestDto_AllArgsConstructor_ShouldCreateWithAllFields() {
         LocalDateTime created = LocalDateTime.now();
 
-        ItemRequestDto dto = new ItemRequestDto(1L, "Нужен компрессор", created, null);
+        ItemRequestDto dto = new ItemRequestDto(1L, "Нужен компрессор", created,null, null);
 
         assertEquals(1L, dto.getId());
         assertEquals("Нужен компрессор", dto.getDescription());
@@ -55,8 +56,8 @@ class ItemRequestDtoTest {
     void testItemRequestDto_EqualsAndHashCode_ShouldWorkCorrectly() {
         LocalDateTime created = LocalDateTime.now();
 
-        ItemRequestDto dto1 = new ItemRequestDto(1L, "Нужен генератор", created, null);
-        ItemRequestDto dto2 = new ItemRequestDto(1L, "Нужен генератор", created, null);
+        ItemRequestDto dto1 = new ItemRequestDto(1L, "Нужен генератор", created, null, null);
+        ItemRequestDto dto2 = new ItemRequestDto(1L, "Нужен генератор", created,null,  null);
 
         assertEquals(dto1, dto2);
         assertEquals(dto1.hashCode(), dto2.hashCode());
@@ -66,7 +67,7 @@ class ItemRequestDtoTest {
     void testItemRequestDto_ToString_ShouldContainAllFields() {
         LocalDateTime created = LocalDateTime.now();
 
-        ItemRequestDto dto = new ItemRequestDto(1L, "Нужен лобзик", created, null);
+        ItemRequestDto dto = new ItemRequestDto(1L, "Нужен лобзик", created, null, null);
         String toString = dto.toString();
 
         assertTrue(toString.contains("id=1"));

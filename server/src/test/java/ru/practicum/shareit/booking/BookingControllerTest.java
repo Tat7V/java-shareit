@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -24,7 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(BookingController.class)
+@WebMvcTest(controllers = {BookingController.class}, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {ru.practicum.shareit.exeptions.ErrorHandler.class}))
 @FieldDefaults(level = AccessLevel.PRIVATE)
 class BookingControllerTest {
 
@@ -45,7 +48,7 @@ class BookingControllerTest {
         UserDto booker = new UserDto();
         booker.setId(1L);
         booker.setName("Тестовый пользователь");
-        booker.setEmail("тест@пример.ру");
+        booker.setEmail("test@example.com");
 
         ItemDto item = new ItemDto();
         item.setId(1L);

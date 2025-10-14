@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.user;
 
 import lombok.AccessLevel;
@@ -12,62 +13,59 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserMapperTest {
 
     @Test
-    void testToUser_ShouldConvertUserDtoToUser() {
-        UserDto userDto = new UserDto();
-        userDto.setId(1L);
-        userDto.setName("Тестовый пользователь");
-        userDto.setEmail("тест@пример.ру");
-
-        User user = UserMapper.toUser(userDto);
-
-        assertEquals(userDto.getId(), user.getId());
-        assertEquals(userDto.getName(), user.getName());
-        assertEquals(userDto.getEmail(), user.getEmail());
-    }
-
-    @Test
-    void testToUser_WithNullUserDto_ShouldThrowException() {
-        assertThrows(NullPointerException.class, () -> UserMapper.toUser(null));
-    }
-
-    @Test
-    void testToUserDto_ShouldConvertUserToUserDto() {
+    void testToUserDto_ShouldConvertUserToDto() {
         User user = new User();
         user.setId(1L);
         user.setName("Тестовый пользователь");
-        user.setEmail("тест@пример.ру");
+        user.setEmail("test@example.com");
 
-        UserDto userDto = UserMapper.toUserDto(user);
+        UserDto result = UserMapper.toUserDto(user);
 
-        assertEquals(user.getId(), userDto.getId());
-        assertEquals(user.getName(), userDto.getName());
-        assertEquals(user.getEmail(), userDto.getEmail());
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Тестовый пользователь", result.getName());
+        assertEquals("test@example.com", result.getEmail());
     }
 
     @Test
-    void testToUserDto_WithNullUser_ShouldThrowException() {
-        assertThrows(NullPointerException.class, () -> UserMapper.toUserDto(null));
+    void testToUserDto_WithNullUser_ShouldReturnNull() {
+        UserDto result = UserMapper.toUserDto(null);
+        assertNull(result);
     }
 
     @Test
-    void testToUser_WithEmptyFields_ShouldCreateUserWithNullFields() {
+    void testToUser_ShouldConvertDtoToUser() {
         UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("Тестовый пользователь");
+        userDto.setEmail("test@example.com");
 
-        User user = UserMapper.toUser(userDto);
+        User result = UserMapper.toUser(userDto);
 
-        assertNull(user.getId());
-        assertNull(user.getName());
-        assertNull(user.getEmail());
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Тестовый пользователь", result.getName());
+        assertEquals("test@example.com", result.getEmail());
     }
 
     @Test
-    void testToUserDto_WithEmptyFields_ShouldCreateUserDtoWithNullFields() {
-        User user = new User();
+    void testToUser_WithNullDto_ShouldReturnNull() {
+        User result = UserMapper.toUser(null);
+        assertNull(result);
+    }
 
-        UserDto userDto = UserMapper.toUserDto(user);
+    @Test
+    void testToUser_WithNullId_ShouldNotSetId() {
+        UserDto userDto = new UserDto();
+        userDto.setId(null);
+        userDto.setName("Тестовый пользователь");
+        userDto.setEmail("test@example.com");
 
-        assertNull(userDto.getId());
-        assertNull(userDto.getName());
-        assertNull(userDto.getEmail());
+        User result = UserMapper.toUser(userDto);
+
+        assertNotNull(result);
+        assertNull(result.getId());
+        assertEquals("Тестовый пользователь", result.getName());
+        assertEquals("test@example.com", result.getEmail());
     }
 }

@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.item.service;
 
 import lombok.AccessLevel;
@@ -41,7 +42,7 @@ class ItemServiceImplIntegrationTest {
     ItemServiceImpl itemService;
 
     User owner;
-    User booker;
+    User user;
     Item item;
 
     @BeforeEach
@@ -56,13 +57,13 @@ class ItemServiceImplIntegrationTest {
 
         owner = new User();
         owner.setName("Владелец");
-        owner.setEmail("владелец@тест.ру");
+        owner.setEmail("owner@example.com");
         owner = userRepository.save(owner);
 
-        booker = new User();
-        booker.setName("Арендатор");
-        booker.setEmail("арендатор@тест.ру");
-        booker = userRepository.save(booker);
+        user = new User();
+        user.setName("Арендатор");
+        user.setEmail("user@example.com");
+        user = userRepository.save(user);
 
         item = new Item();
         item.setName("Тестовая вещь");

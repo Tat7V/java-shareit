@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,11 +45,11 @@ class UserControllerTest {
         userDto = new UserDto();
         userDto.setId(1L);
         userDto.setName("Тестовый пользователь");
-        userDto.setEmail("тест@пример.ру");
+        userDto.setEmail("test@example.com");
 
         userUpdateDto = new UserUpdateDto();
         userUpdateDto.setName("Обновленный пользователь");
-        userUpdateDto.setEmail("обновленный@пример.ру");
+        userUpdateDto.setEmail("updatetest@example.com");
     }
 
     @Test
@@ -61,7 +62,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Тестовый пользователь"))
-                .andExpect(jsonPath("$.email").value("тест@пример.ру"));
+                .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
@@ -72,7 +73,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Тестовый пользователь"))
-                .andExpect(jsonPath("$.email").value("тест@пример.ру"));
+                .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test

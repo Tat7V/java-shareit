@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class ItemController {
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemDto createItem(@RequestBody ItemDto itemDto,
+    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
                               @RequestHeader(USER_ID_HEADER) Long ownerId) {
         return itemService.createItem(itemDto, ownerId);
     }

@@ -12,6 +12,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemForRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -85,11 +86,17 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .map(this::convertItemToRequestDto)
                 .collect(Collectors.toList());
 
+        UserDto requestorDto = new UserDto();
+        requestorDto.setId(itemRequest.getRequestor().getId());
+        requestorDto.setName(itemRequest.getRequestor().getName());
+        requestorDto.setEmail(itemRequest.getRequestor().getEmail());
+
         return new ItemRequestDto(
                 itemRequest.getId(),
                 itemRequest.getDescription(),
                 itemRequest.getCreated(),
-                items
+                items,
+                requestorDto
         );
     }
 

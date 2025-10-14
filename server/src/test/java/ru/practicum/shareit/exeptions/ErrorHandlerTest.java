@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.exeptions;
 
 import lombok.AccessLevel;

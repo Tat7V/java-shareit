@@ -186,6 +186,14 @@ public class BookingServiceImpl implements BookingService {
         ItemDto itemDto = new ItemDto();
         itemDto.setId(booking.getItem().getId());
         itemDto.setName(booking.getItem().getName());
+        itemDto.setDescription(booking.getItem().getDescription());
+        itemDto.setAvailable(booking.getItem().getAvailable());
+        itemDto.setRequestId(booking.getItem().getRequest() != null ? booking.getItem().getRequest().getId() : null);
+        UserDto ownerDto = new UserDto();
+        ownerDto.setId(booking.getItem().getOwner().getId());
+        ownerDto.setName(booking.getItem().getOwner().getName());
+        ownerDto.setEmail(booking.getItem().getOwner().getEmail());
+        itemDto.setOwner(ownerDto);
 
         UserDto bookerDto = new UserDto();
         bookerDto.setId(booking.getBooker().getId());

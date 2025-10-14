@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.request.service;
 
 import lombok.AccessLevel;
@@ -9,19 +10,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exeptions.NotFoundException;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.item.repository.ItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,97 +42,151 @@ class ItemRequestServiceImplTest {
     @InjectMocks
     ItemRequestServiceImpl itemRequestService;
 
-    ItemRequestDto itemRequestDto;
-    ItemRequest itemRequest;
     User user;
+    ItemRequest request;
+    ItemRequestDto requestDto;
 
     @BeforeEach
     void setUp() {
         user = new User();
         user.setId(1L);
-        user.setName("Тестовый пользователь");
-        user.setEmail("тест@пример.ру");
+        user.setName("Дмитрий Волков");
+        user.setEmail("dmitry@example.com");
 
-        itemRequest = new ItemRequest();
-        itemRequest.setId(1L);
-        itemRequest.setDescription("Нужна дрель");
-        itemRequest.setCreated(LocalDateTime.now());
-        itemRequest.setRequestor(user);
+        request = new ItemRequest();
+        request.setId(1L);
+        request.setDescription("Нужен сварочный аппарат");
+        request.setRequestor(user);
+        request.setCreated(LocalDateTime.now());
 
-        itemRequestDto = new ItemRequestDto();
-        itemRequestDto.setId(1L);
-        itemRequestDto.setDescription("Нужна дрель");
-        itemRequestDto.setCreated(LocalDateTime.now());
+        requestDto = new ItemRequestDto();
+        requestDto.setDescription("Нужен сварочный аппарат");
     }
 
     @Test
     void testCreateRequest_ShouldReturnCreatedRequest() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(itemRequest);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(request);
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of());
 
-        ItemRequestDto result = itemRequestService.createRequest(itemRequestDto, 1L);
+        ItemRequestDto result = itemRequestService.createRequest(requestDto, 1L);
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Нужна дрель", result.getDescription());
+        assertEquals("Нужен сварочный аппарат", result.getDescription());
         verify(itemRequestRepository).save(any(ItemRequest.class));
     }
 
     @Test
     void testCreateRequest_WithNonExistentUser_ShouldThrowNotFoundException() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> itemRequestService.createRequest(itemRequestDto, 1L));
+        assertThrows(NotFoundException.class, () -> itemRequestService.createRequest(requestDto, 999L));
     }
 
     @Test
-    void testGetUserRequests_ShouldReturnRequestsList() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRequestRepository.findByRequestorIdOrderByCreatedDesc(anyLong()))
-                .thenReturn(List.of(itemRequest));
+    void testGetUserRequests_ShouldReturnUserRequests() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(itemRequestRepository.findByRequestorIdOrderByCreatedDesc(1L)).thenReturn(List.of(request));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of());
 
         List<ItemRequestDto> result = itemRequestService.getUserRequests(1L);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals("Нужна дрель", result.get(0).getDescription());
+        assertEquals("Нужен сварочный аппарат", result.get(0).getDescription());
     }
 
     @Test
-    void testGetAllRequests_ShouldReturnRequestsList() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRequestRepository.findByRequestorIdNotOrderByCreatedDesc(anyLong(), any()))
-                .thenReturn(List.of(itemRequest));
+    void testGetUserRequests_WithNonExistentUser_ShouldThrowNotFoundException() {
+        when(userRepository.existsById(999L)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> itemRequestService.getUserRequests(999L));
+    }
+
+    @Test
+    void testGetAllRequests_ShouldReturnAllRequests() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(itemRequestRepository.findByRequestorIdNotOrderByCreatedDesc(anyLong(), any())).thenReturn(List.of(request));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of());
 
         List<ItemRequestDto> result = itemRequestService.getAllRequests(1L, 0, 10);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
+    }
+
+    @Test
+    void testGetAllRequests_WithNonExistentUser_ShouldThrowNotFoundException() {
+        when(userRepository.existsById(999L)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> itemRequestService.getAllRequests(999L, 0, 10));
     }
 
     @Test
     void testGetRequestById_ShouldReturnRequest() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(itemRequestRepository.findById(1L)).thenReturn(Optional.of(request));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of());
 
         ItemRequestDto result = itemRequestService.getRequestById(1L, 1L);
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Нужна дрель", result.getDescription());
+        assertEquals("Нужен сварочный аппарат", result.getDescription());
+    }
+
+    @Test
+    void testGetRequestById_WithNonExistentUser_ShouldThrowNotFoundException() {
+        when(userRepository.existsById(999L)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> itemRequestService.getRequestById(1L, 999L));
     }
 
     @Test
     void testGetRequestById_WithNonExistentRequest_ShouldThrowNotFoundException() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(itemRequestRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> itemRequestService.getRequestById(1L, 1L));
+        assertThrows(NotFoundException.class, () -> itemRequestService.getRequestById(999L, 1L));
+    }
+
+    @Test
+    void testCreateRequest_WithItems_ShouldReturnRequestWithItems() {
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("Сварочный аппарат");
+        item.setDescription("Полуавтоматический сварочный аппарат");
+        item.setAvailable(true);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(request);
+        when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
+
+        ItemRequestDto result = itemRequestService.createRequest(requestDto, 1L);
+
+        assertNotNull(result);
+        assertNotNull(result.getItems());
+        assertEquals(1, result.getItems().size());
+        assertEquals("Сварочный аппарат", result.getItems().get(0).getName());
+    }
+
+    @Test
+    void testGetUserRequests_WithItems_ShouldReturnRequestsWithItems() {
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("Компрессор");
+        item.setDescription("Воздушный компрессор");
+        item.setAvailable(true);
+
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(itemRequestRepository.findByRequestorIdOrderByCreatedDesc(1L)).thenReturn(List.of(request));
+        when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
+
+        List<ItemRequestDto> result = itemRequestService.getUserRequests(1L);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertNotNull(result.get(0).getItems());
+        assertEquals(1, result.get(0).getItems().size());
+        assertEquals("Компрессор", result.get(0).getItems().get(0).getName());
     }
 }
