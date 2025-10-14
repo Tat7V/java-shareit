@@ -33,7 +33,8 @@ class ItemDtoTest {
     }
 
     @Test
-    void testDeserializeItemDto() throws Exception {
+    void testDeserializeItemDto() throws Exception
+    {
         String jsonContent = """
                 {
                     "id": 1,

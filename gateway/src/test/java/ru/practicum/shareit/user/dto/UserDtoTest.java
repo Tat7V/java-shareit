@@ -29,7 +29,8 @@ class UserDtoTest {
     }
 
     @Test
-    void testDeserializeUserDto() throws Exception {
+    void testDeserializeUserDto() throws Exception
+    {
         String jsonContent = """
                 {
                     "id": 1,
