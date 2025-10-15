@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookingRequestDtoTest {
 
     @Test
-    void testBookingRequestDtoCreation_ShouldCreateBookingRequestDtoWithAllFields() {
+    void testShouldCreateBookingRequestDtoWithAllFields() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         
@@ -28,7 +28,7 @@ class BookingRequestDtoTest {
     }
 
     @Test
-    void testBookingRequestDtoAllArgsConstructor_ShouldCreateBookingRequestDtoWithAllFields() {
+    void testAAC_ShouldCreateBookingRequestDtoWithAllFields() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         
@@ -40,7 +40,7 @@ class BookingRequestDtoTest {
     }
 
     @Test
-    void testBookingRequestDtoNoArgsConstructor_ShouldCreateEmptyBookingRequestDto() {
+    void testNAC_ShouldCreateEmptyBookingRequestDto() {
         BookingRequestDto emptyBookingRequestDto = new BookingRequestDto();
 
         assertNull(emptyBookingRequestDto.getItemId());
@@ -49,7 +49,7 @@ class BookingRequestDtoTest {
     }
 
     @Test
-    void testBookingRequestDtoEquals_ShouldReturnTrueForSameBookingRequestDtos() {
+    void testShouldReturnTrueForSameBookingRequestDtos() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         
@@ -61,7 +61,7 @@ class BookingRequestDtoTest {
     }
 
     @Test
-    void testBookingRequestDtoEquals_ShouldReturnFalseForDifferentBookingRequestDtos() {
+    void testShouldReturnFalseForDifferentBookingRequestDtos() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         
@@ -72,7 +72,7 @@ class BookingRequestDtoTest {
     }
 
     @Test
-    void testBookingRequestDtoToString_ShouldContainAllFields() {
+    void testToStringShouldContainAllFields() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         
@@ -83,7 +83,7 @@ class BookingRequestDtoTest {
     }
 
     @Test
-    void testBookingRequestDtoWithNullFields_ShouldWorkCorrectly() {
+    void testBookingRequestDtoWithNullFieldsShouldWorkCorrectly() {
         BookingRequestDto bookingRequestDto = new BookingRequestDto();
         bookingRequestDto.setItemId(null);
         bookingRequestDto.setStart(null);

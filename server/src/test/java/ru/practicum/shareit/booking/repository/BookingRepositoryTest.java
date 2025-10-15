@@ -86,7 +86,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void testFindByBookerIdOrderByStartDesc_WithNonExistentBooker_ShouldReturnEmpty() {
+    void testFindByBookerIdOrderByStartDesc_ShouldReturnEmpty() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Booking> bookings = bookingRepository.findByBookerIdOrderByStartDesc(999L, pageable);
 
@@ -107,7 +107,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void testFindByItemOwnerIdOrderByStartDesc_WithNonExistentOwner_ShouldReturnEmpty() {
+    void testFindByItemOwnerIdOrderByStartDesc_ShouldReturnEmpty() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Booking> bookings = bookingRepository.findByItemOwnerIdOrderByStartDesc(999L, pageable);
 
@@ -130,7 +130,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void testFindByItemIdAndBookerIdAndEndBeforeAndStatus_WithFutureBooking_ShouldReturnEmpty() {
+    void testFindByItemIdAndBookerIdAndEndBeforeAndStatus_ShouldReturnEmpty() {
         bookingRepository.save(booking);
         entityManager.flush();
 

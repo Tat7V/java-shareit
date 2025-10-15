@@ -50,7 +50,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoCreation_ShouldCreateBookingDtoWithAllFields() {
+    void testShouldCreateBookingDtoWithAllFields() {
         assertEquals(1L, bookingDto.getId());
         assertNotNull(bookingDto.getStart());
         assertNotNull(bookingDto.getEnd());
@@ -60,7 +60,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoAllArgsConstructor_ShouldCreateBookingDtoWithAllFields() {
+    void testAAC_ShouldCreateBookingDtoWithAllFields() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         BookingDto newBookingDto = new BookingDto(2L, start, end, item, booker, BookingStatus.APPROVED);
@@ -74,7 +74,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoNoArgsConstructor_ShouldCreateEmptyBookingDto() {
+    void testNAC_ShouldCreateEmptyBookingDto() {
         BookingDto emptyBookingDto = new BookingDto();
 
         assertNull(emptyBookingDto.getId());
@@ -86,7 +86,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoEquals_ShouldReturnTrueForSameBookingDtos() {
+    void testShouldReturnTrueForSameBookingDtos() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         BookingDto bookingDto1 = new BookingDto(1L, start, end, item, booker, BookingStatus.WAITING);
@@ -97,7 +97,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoEquals_ShouldReturnFalseForDifferentBookingDtos() {
+    void testShouldReturnFalseForDifferentBookingDtos() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         BookingDto bookingDto1 = new BookingDto(1L, start, end, item, booker, BookingStatus.WAITING);
@@ -107,7 +107,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoToString_ShouldContainAllFields() {
+    void testToStringShouldContainAllFields() {
         String toString = bookingDto.toString();
 
         assertTrue(toString.contains("1"));
@@ -115,7 +115,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testBookingDtoStatusValues_ShouldWorkCorrectly() {
+    void testStatusValuesShouldWorkCorrectly() {
         bookingDto.setStatus(BookingStatus.APPROVED);
         assertEquals(BookingStatus.APPROVED, bookingDto.getStatus());
 

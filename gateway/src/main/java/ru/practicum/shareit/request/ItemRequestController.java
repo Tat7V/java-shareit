@@ -19,22 +19,23 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 @Validated
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     public ResponseEntity<Object> createRequest(@Valid @RequestBody ItemRequestDto requestDto,
-                                                @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                                @RequestHeader(USER_ID_HEADER) Long userId) {
         log.info("Creating item request by user {}", userId);
         return itemRequestClient.createRequest(requestDto, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getUserRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> getUserRequests(@RequestHeader(USER_ID_HEADER) Long userId) {
         log.info("Getting requests for user {}", userId);
         return itemRequestClient.getUserRequests(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> getAllRequests(@RequestHeader(USER_ID_HEADER) Long userId,
                                                  @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                  @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Getting all requests for user {}, from {}, size {}", userId, from, size);
@@ -43,7 +44,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getRequestById(@PathVariable Long requestId,
-                                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                                 @RequestHeader(USER_ID_HEADER) Long userId) {
         log.info("Getting request {} for user {}", requestId, userId);
         return itemRequestClient.getRequestById(requestId, userId);
     }

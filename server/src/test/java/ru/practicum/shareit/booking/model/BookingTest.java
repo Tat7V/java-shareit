@@ -50,7 +50,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingCreation_ShouldCreateBookingWithAllFields() {
+    void testShouldCreateBookingWithAllFields() {
         assertEquals(1L, booking.getId());
         assertNotNull(booking.getStart());
         assertNotNull(booking.getEnd());
@@ -60,7 +60,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingAllArgsConstructor_ShouldCreateBookingWithAllFields() {
+    void testAAC_ShouldCreateBookingWithAllFields() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         Booking newBooking = new Booking(2L, start, end, item, booker, BookingStatus.APPROVED);
@@ -74,7 +74,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingNoArgsConstructor_ShouldCreateEmptyBooking() {
+    void testNAC_ShouldCreateEmptyBooking() {
         Booking emptyBooking = new Booking();
 
         assertNull(emptyBooking.getId());
@@ -86,7 +86,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingEquals_ShouldReturnTrueForSameBookings() {
+    void testShouldReturnTrueForSameBookings() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         Booking booking1 = new Booking(1L, start, end, item, booker, BookingStatus.WAITING);
@@ -97,7 +97,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingEquals_ShouldReturnFalseForDifferentBookings() {
+    void testShouldReturnFalseForDifferentBookings() {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         Booking booking1 = new Booking(1L, start, end, item, booker, BookingStatus.WAITING);
@@ -107,7 +107,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingToString_ShouldContainAllFields() {
+    void testToStringShouldContainAllFields() {
         String toString = booking.toString();
 
         assertTrue(toString.contains("1"));
@@ -115,7 +115,7 @@ class BookingTest {
     }
 
     @Test
-    void testBookingStatusValues_ShouldWorkCorrectly() {
+    void testStatusValuesShouldWorkCorrectly() {
         booking.setStatus(BookingStatus.APPROVED);
         assertEquals(BookingStatus.APPROVED, booking.getStatus());
 
